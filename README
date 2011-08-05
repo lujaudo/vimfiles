@@ -2,6 +2,7 @@ Installation:
 
     git clone git://github.com/lujaudo/vimfiles.git ~/.vim
 
+
 Create symlinks:
 
     ln -s ~/.vim/vimrc ~/.vimrc
@@ -18,3 +19,6 @@ Switch to the `~/.vim` directory, and fetch submodules:
     git submodule init
     git submodule update
 
+Windows setup:
+install Git http://code.google.com/p/msysgit/
+export https_proxy=http://name:passwd@wwwproxy:80
