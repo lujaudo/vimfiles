@@ -1,3 +1,7 @@
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+
 " UTF-8 must be the first
 "language en
 set encoding=utf-8
