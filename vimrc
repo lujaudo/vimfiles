@@ -51,7 +51,7 @@ map ö ^
 " map ä to go-to-end-of-line
 map ä $
 " Format paragraph
-"map Q gwap
+map Q gwap
 
 " Reformat paragraphs and list.
 "nnoremap R gq}
