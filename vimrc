@@ -246,6 +246,8 @@ imap <S-C-Tab> <ESC>:tabprevious <cr>
 map <A-Left> :pop <CR>
 " Alt-Right go to tag under cursor
 map <A-Right> :lt <C-R>=expand("<cword>") <CR><CR> :lope <CR> <C-W>k
+" localleader-t to preview tag
+map <localleader>t <C-W>}
 
 map <C-Right> :tn <CR>
 map <C-Left> :tp <CR>
@@ -406,9 +408,17 @@ let g:NERDTreeShowBookmarks=1
 "**************************************************
 "omnicomplete.vim
 "**************************************************
-" see <URL:vimscript:he OmniCpp_ShowPrototypeInAbbr>
-let g:OmniCpp_ShowPrototypeInAbbr = 0
-let g:OmniCpp_SelectFirstItem = 1
+"e see <URL:vimscript:he OmniCpp_ShowPrototypeInAbbr>
+set omnifunc=syntaxcomplete#Complete " override built-in C omnicomplete with C++ OmniCppComplete plugin
+let OmniCpp_GlobalScopeSearch   = 1
+let OmniCpp_DisplayMode         = 1
+let OmniCpp_ShowScopeInAbbr     = 0 "do not show namespace in pop-up
+let OmniCpp_ShowPrototypeInAbbr = 1 "show prototype in pop-up
+let OmniCpp_ShowAccess          = 1 "show access in pop-up
+let OmniCpp_SelectFirstItem     = 1 "select first item in pop-up
+set completeopt=menuone,menu,longest
+
+let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
 
 
 
