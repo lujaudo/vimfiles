@@ -256,8 +256,6 @@ map <A-UP> :cp <CR>
 map <C-UP> :lp <CR>
 map <C-w>q :bd <CR>
 
-" Project toggle ON/OFF
-nmap <silent> <F1> <Plug>ToggleProject
 
 
 " Folding
@@ -358,7 +356,53 @@ amenu Omat.marks.add\ mark<tab>,mm ,mm
 
 
 
+
+
 """PLUGINGS""""
+
+"****************Nerdtree**************************
+function! NTFinderP()
+    "" Check if NERDTree is open
+    let s:ntree = -1
+    let s:ptree = -1
+    if exists("t:NERDTreeBufName")
+        let s:ntree = bufwinnr(t:NERDTreeBufName)
+    endif
+    if exists('g:proj_running') 
+        let s:ptree = bufwinnr(g:proj_running) 
+    endif
+
+    if (s:ntree != -1)
+        "" If NERDTree is open, close it.
+        :NERDTreeClose
+        :Project
+    endif
+
+    if (s:ptree != -1)
+        let g:proj_mywindow = winnr()
+        Project
+        hide
+        if(winnr() != g:proj_mywindow)
+            wincmd p
+        endif
+        unlet g:proj_mywindow
+        "" If NERDTree is open, close it.
+        :NERDTreeFind
+    endif
+
+    if(s:ptree == -1 && s:ntree== -1)
+        :Project
+    endif
+endfunction
+
+
+"" Toggles NERDTree
+nnoremap <silent> <F1> :call NTFinderP()<CR>
+inoremap <silent> <F1> :<ESC>call NTFinderP()<CR>
+
+" show bookmarks above directory listing
+let g:NERDTreeShowBookmarks=1
+
 "**************************************************
 "omnicomplete.vim
 "**************************************************

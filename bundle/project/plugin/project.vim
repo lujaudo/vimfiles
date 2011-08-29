@@ -1227,7 +1227,7 @@ function! s:Project(filename) " <<<
         " The :help command stomps on the Project Window.  Try to avoid that.
         " This is not perfect, but it is alot better than without the mappings.
         cnoremap <buffer> help let g:proj_doinghelp = 1<CR>:help
-        nnoremap <buffer> <F1> :let g:proj_doinghelp = 1<CR><F1>
+        "nnoremap <buffer> <F1> :let g:proj_doinghelp = 1<CR><F1>
         " This is to avoid changing the buffer, but it is not fool-proof.
         nnoremap <buffer> <silent> <C-^> <Nop>
         "nnoremap <script> <Plug>ProjectOnly :let lzsave=&lz<CR>:set lz<CR><C-W>o:Project<CR>:silent! wincmd p<CR>:let &lz=lzsave<CR>:unlet lzsave<CR>
