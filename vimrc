@@ -129,11 +129,12 @@ set showcmd		" display incomplete commands
 set incsearch		" do incremental searching
 
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
+" Switch syntax highlighting oon, when the terminal has colors
+" Also switch off highlighting the last used search pattern (mark plugin
+" handles the highlights of searches).
 if &t_Co > 2 || has("gui_running")
     syntax on
-    set hlsearch
+    set nohlsearch
 endif
 
 " Only do this part when compiled with support for autocommands.
@@ -181,9 +182,7 @@ map <localleader>ml D :wincmd h<cr>O<ESC>gp:wincmd l<cr>
 " Select Buffer
 map <leader>b :SelectBuf<CR>
 " Taglist
-nmap <silent> <F12> :TlistToggle <CR>
-" Project
-nmap <silent> <F1> <Plug>ToggleProject
+nnoremap <silent> <F12> :TagbarToggle<CR>
 " C-n goes to next file 
 map <C-n> :n<CR>
 " C-p goes to previous file 
@@ -366,41 +365,30 @@ amenu Omat.marks.add\ mark<tab>,mm ,mm
 function! NTFinderP()
     "" Check if NERDTree is open
     let s:ntree = -1
-    let s:ptree = -1
     if exists("t:NERDTreeBufName")
         let s:ntree = bufwinnr(t:NERDTreeBufName)
-    endif
-    if exists('g:proj_running') 
-        let s:ptree = bufwinnr(g:proj_running) 
     endif
 
     if (s:ntree != -1)
         "" If NERDTree is open, close it.
         :NERDTreeClose
-        :Project
+        return
     endif
 
-    if (s:ptree != -1)
-        let g:proj_mywindow = winnr()
-        Project
-        hide
-        if(winnr() != g:proj_mywindow)
-            wincmd p
-        endif
-        unlet g:proj_mywindow
-        "" If NERDTree is open, close it.
+    if(expand("%:p")=="") 
+        :NERDTree $HOME
+    else
         :NERDTreeFind
     endif
 
-    if(s:ptree == -1 && s:ntree== -1)
-        :Project
-    endif
 endfunction
 
 
 "" Toggles NERDTree
-nnoremap <silent> <F1> :call NTFinderP()<CR>
-inoremap <silent> <F1> :<ESC>call NTFinderP()<CR>
+imap <silent> <F2> :<ESC>call NTFinderP()<CR>
+nmap <silent> <F2> :call NTFinderP()<CR>
+imap <silent> <S-F2> :<ESC>:NERDTree $HOME<CR>
+nmap <silent> <S-F2> :NERDTree $HOME<CR>
 
 " show bookmarks above directory listing
 let g:NERDTreeShowBookmarks=1
@@ -454,7 +442,9 @@ let g:proj_window_increment = 50
 "let g:proj_flags="mstvcgF"
 let g:proj_flags="stgv"
 
-
+" Project
+nmap <silent> <F1> <Plug>ToggleProject
+imap <silent> <F1> <ESC><Plug>ToggleProject
 
 "*******************************************************
 " A.vim
@@ -474,6 +464,18 @@ let g:alternateSearchPath =
             \sfr:../../../include,
             \sfr:../../../inc'
 
+
+"*************************
+" MARK
+"************************
+
+nmap  <silent> * <Plug>MarkSet
+vmap  <silent> * <Plug>MarkSet
+nmap  <silent> n <Plug>MarkSearchCurrentNext
+nmap  <silent> N <Plug>MarkSearchCurrentPrev
+let g:mwAutoLoadMarks = 1
+nmap <Plug>IgnoreMarkSearchNext <Plug>MarkSearchNext
+nmap <Plug>IgnoreMarkSearchPrev <Plug>MarkSearchPrev
 "***********************************************************
 " showmarks.vim
 "***********************************************************
