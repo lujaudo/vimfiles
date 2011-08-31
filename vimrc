@@ -486,7 +486,12 @@ highlight ShowMarksHLu guifg='black' guibg='yellow'
 let g:showmarks_textlower=">"
 let g:showmarks_textupper=">"
 
-
+"***************
+"FUGITIVE
+"*************
+"Add %{fugitive#statusline()} to your statusline to get an indicator including
+" the current branch and the currently edited file's commit.
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 
 
