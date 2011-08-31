@@ -486,7 +486,7 @@ function! s:Project(filename) " <<<
     function! s:DoEntryFromDir(recursive, line, name, absolute_dir, dir, c_d, filter_directive, filter, foldlev, sort)
         call s:GenerateEntry(a:recursive, a:line, a:name, escape(a:absolute_dir, ' '), escape(a:dir, ' '), escape(a:c_d, ' '), a:filter_directive, a:filter, a:foldlev, a:sort)
         normal! j
-        call s:RefreshEntriesFromDir(1)
+        call s:RefreshEntriesFromDir(1,0)
     endfunction ">>>
     " s:CreateEntriesFromDir(recursive) <<<
     "   Prompts user for information and then calls s:DoEntryFromDir()
@@ -568,7 +568,7 @@ function! s:Project(filename) " <<<
     " s:RefreshEntriesFromDir(recursive) <<<
     "   Finds metadata at the top of the fold, and then replaces all files
     "   with the contents of the directory.  Works recursively if recursive is 1.
-    function! s:RefreshEntriesFromDir(recursive)
+    function! s:RefreshEntriesFromDir(recursive, directories)
         if foldlevel('.') == 0
             echo 'Nothing to refresh.'
             return
@@ -646,13 +646,17 @@ function! s:Project(filename) " <<<
                 " We have reached a sub-fold. If we're doing recursive, then
                 " call this function again. If not, find the end of the fold.
                 if a:recursive == 1
-                    call s:RefreshEntriesFromDir(1)
+                    call s:RefreshEntriesFromDir(1,0)
                     normal! ]zj
                 else
                     if foldclosed('.') == -1
                         normal! zc
                     endif
-                    normal! j
+                    if (a:directories == 1)
+                        normal! dd
+                    else
+                        normal! j
+                    endif
                 endif
             endif
         endwhile
@@ -682,6 +686,20 @@ function! s:Project(filename) " <<<
                     echon home."\r"
                 endif
                 call s:VimDirListing(filter, spaces, "\n", 'b:files', 'b:filecount', 'b:dirs', 'b:dircount')
+                if (a:directories == 1) && (b:dircount > 0)
+                    let b:dirlist=split(b:dirs,'\n')
+                    call sort(b:dirlist)
+                    for item in b:dirlist 
+                        call append(line("."),item . "=" . substitute(item,spaces,"","") . " {")
+                        normal! j
+                        call append(line("."), spaces . "}")
+                        normal! j
+                        normal! zc
+                    endfor
+                    if sort
+                        call s:SortR(line('.'), line('.') + b:dircount - 1)
+                    endif
+                endif
                 if b:filecount > 0
                     normal! mk
                     silent! put =b:files
@@ -692,7 +710,7 @@ function! s:Project(filename) " <<<
                 else
                     normal! j
                 endif
-                unlet b:files b:filecount b:dirs b:dircount
+                unlet b:files b:filecount b:dirs b:dircount 
                 exec 'cd '.cwd
             endif
         endif
@@ -1216,12 +1234,12 @@ function! s:Project(filename) " <<<
         nnoremap <buffer>          <LocalLeader>0 \|:call <SID>ListSpawn("")<CR>
         nnoremap <buffer>          <LocalLeader>f0 \|:call <SID>ListSpawn("_fold")<CR>
         nnoremap <buffer>          <LocalLeader>F0 \|:call <SID>ListSpawn("_fold")<CR>
-        nnoremap <buffer> <silent> <LocalLeader>c :call <SID>CreateEntriesFromDir(0)<CR>
+        nnoremap <buffer> <silent> <LocalLeader>c :call <SID>RefreshEntriesFromDir(0,1)<CR>
         nnoremap <buffer> <silent> <LocalLeader>C :call <SID>CreateEntriesFromDir(1)<CR>
-        nnoremap <buffer> <silent> <LocalLeader>r :call <SID>RefreshEntriesFromDir(0)<CR>
-        nnoremap <buffer> <silent> <LocalLeader>R :call <SID>RefreshEntriesFromDir(1)<CR>
+        nnoremap <buffer> <silent> <LocalLeader>r :call <SID>RefreshEntriesFromDir(0,0)<CR>
+        nnoremap <buffer> <silent> <LocalLeader>R :call <SID>RefreshEntriesFromDir(1,0)<CR>
         " For Windows users: same as \R
-        nnoremap <buffer> <silent>           <F5> :call <SID>RefreshEntriesFromDir(1)<CR>
+        nnoremap <buffer> <silent>           <F5> :call <SID>RefreshEntriesFromDir(1,0)<CR>
         nnoremap <buffer> <silent> <LocalLeader>e :call <SID>OpenEntry(line('.'), '', '', 0)<CR>
         nnoremap <buffer> <silent> <LocalLeader>E :call <SID>OpenEntry(line('.'), '', 'e', 1)<CR>
         " The :help command stomps on the Project Window.  Try to avoid that.
