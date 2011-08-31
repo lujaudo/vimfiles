@@ -180,7 +180,7 @@ map <localleader>mr D :wincmd l<cr>O<ESC>gp:wincmd h<cr>
 map <localleader>ml D :wincmd h<cr>O<ESC>gp:wincmd l<cr>
 
 " Select Buffer
-map <leader>b :SelectBuf<CR>
+map <localleader>b :BufExplorer<CR>
 " Taglist
 nnoremap <silent> <F12> :TagbarToggle<CR>
 " C-n goes to next file 
