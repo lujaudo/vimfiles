@@ -307,22 +307,22 @@ amenu Omat.VimRexx<tab>:Vimrex :Vimrex<cr>
 " Highlight current line 
 amenu  Omat.Highlight.currentline<tab>,hh :call <SID>Highlight("h")<cr>
 " Advance color for next line highlight
-amenu  Omat.Highlight.advance\ Color<tab>,hn :call <SID>Highlight("a")
+amenu  Omat.Highlight.advance\ Color<tab>,hn :call <SID>Highlight("a")
 " Clear last line highlight
-amenu  Omat.Highlight.Clear\ Last\ Highlight<tab>,hk :call <SID>Highlight("r")
+amenu  Omat.Highlight.Clear\ Last\ Highlight<tab>,hk :call <SID>Highlight("r")
 
 amenu Omat.Comment\ visual\ block<tab>,co ,co
 
 " Highlight all lines having word under cursor (whole word match)
-amenu  Omat.Highlight.Highlight\ all\ with\ word\ under\ cursor<tab>,hw :call <SID>Highlight("f")
+amenu  Omat.Highlight.Highlight\ all\ with\ word\ under\ cursor<tab>,hw :call <SID>Highlight("f")
 " Highlight all lines having word under cursor (partial word match)
 " Highlight last search pattern
-amenu  Omat.Highlight.Highlight\ last\ search\ pattern<tab>,hs :call <SID>Highlight("s")
+amenu  Omat.Highlight.Highlight\ last\ search\ pattern<tab>,hs :call <SID>Highlight("s")
 " Clear last pattern highlight
-amenu  Omat.Highlight.clear\ last\ pattern\ highlight<tab>,hp :call <SID>Highlight("d")
+amenu  Omat.Highlight.clear\ last\ pattern\ highlight<tab>,hp :call <SID>Highlight("d")
 
 " Clear all highlights
-amenu  Omat.Highlight.clear\ all\ highlights<tab>,hq :call <SID>Highlight("n")
+amenu  Omat.Highlight.clear\ all\ highlights<tab>,hq :call <SID>Highlight("n")
 
 " Nerdtree
 amenu Omat.Nerdtree.Open\ in\ cwd :exe 'NerdTree .' getcwd()
