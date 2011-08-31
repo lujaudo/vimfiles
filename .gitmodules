@@ -4,12 +4,12 @@
 [submodule "bundle/gitv"]
 	path = bundle/gitv
 	url = https://github.com/gregsexton/gitv.git
-[submodule "bundle\\nerdtree"]
-	path = bundle\\nerdtree
+[submodule "bundle/nerdtree"]
+	path = bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree.git
-[submodule "bundle\\supertab"]
-	path = bundle\\supertab
+[submodule "bundle/supertab"]
+	path = bundle/supertab
 	url = https://github.com/ervandew/supertab.git
-[submodule "bundle\\tagbar"]
-	path = bundle\\tagbar
+[submodule "bundle/tagbar"]
+	path = bundle/tagbar
 	url = https://github.com/majutsushi/tagbar.git
