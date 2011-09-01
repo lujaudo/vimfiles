@@ -37,7 +37,7 @@ git commit -m "Install Fugitive.vim bundle as a submodule."
 Installing your Vim environment on another machine
 
 cd ~
-git clone http://github.com/username/dotvim.git ~/.vim
+git clone http://github.com/lujaudo/vimfiles.git ~/.vim
 ln -s ~/.vim/vimrc ~/.vimrc
 ln -s ~/.vim/gvimrc ~/.gvimrc
 cd ~/.vim
