@@ -147,6 +147,8 @@ if has("autocmd")
     filetype on
     filetype plugin indent on
 
+    autocmd Filetype c,cpp let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+
 
     " When editing a file, always jump to the last known cursor position.
     " Don't do it when the position is invalid or when inside an event handler
@@ -246,7 +248,7 @@ map <A-Left> :pop <CR>
 " Alt-Right go to tag under cursor
 map <A-Right> :lt <C-R>=expand("<cword>") <CR><CR> :lope <CR> <C-W>k
 " localleader-t to preview tag
-map <localleader>t <C-W>}
+map <localleader>t :ptjump <C-R>=expand("<cword>") <CR><CR> 
 
 map <C-Right> :tn <CR>
 map <C-Left> :tp <CR>
@@ -406,8 +408,11 @@ let OmniCpp_ShowAccess          = 1 "show access in pop-up
 let OmniCpp_SelectFirstItem     = 1 "select first item in pop-up
 set completeopt=menuone,menu,longest
 
-let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+"*************************************************
+"Supertab
+"***********************************************
 
+let g:SuperTabDefaultCompletionType = "context"
 
 
 "**************************************************
@@ -473,6 +478,8 @@ nmap  <silent> * <Plug>MarkSet
 vmap  <silent> * <Plug>MarkSet
 nmap  <silent> n <Plug>MarkSearchCurrentNext
 nmap  <silent> N <Plug>MarkSearchCurrentPrev
+nmap  <silent> <localleader>n :call mark#DoMark(@/)<CR> 
+nmap  <silent> <Plug>IgnoreMarkClear <Plug>MarkClear
 let g:mwAutoLoadMarks = 1
 nmap <Plug>IgnoreMarkSearchNext <Plug>MarkSearchNext
 nmap <Plug>IgnoreMarkSearchPrev <Plug>MarkSearchPrev
