@@ -1224,13 +1224,13 @@ function! s:Project(filename) " <<<
         nnoremap <buffer> <silent> <C-Down> \|:silent call <SID>MoveDown()<CR>
         nmap     <buffer> <silent> <LocalLeader><Up> <C-Up>
         nmap     <buffer> <silent> <LocalLeader><Down> <C-Down>
-        let k=1
-        while k < 10
-            exec 'nnoremap <buffer> <LocalLeader>'.k.'  \|:call <SID>Spawn('.k.')<CR>'
-            exec 'nnoremap <buffer> <LocalLeader>f'.k.' \|:call <SID>SpawnAll(0, '.k.')<CR>'
-            exec 'nnoremap <buffer> <LocalLeader>F'.k.' \|:call <SID>SpawnAll(1, '.k.')<CR>'
-            let k=k+1
-        endwhile
+        "let k=1
+        "while k < 10
+        "    exec 'nnoremap <buffer> <LocalLeader>'.k.'  \|:call <SID>Spawn('.k.')<CR>'
+        "    exec 'nnoremap <buffer> <LocalLeader>f'.k.' \|:call <SID>SpawnAll(0, '.k.')<CR>'
+        "    exec 'nnoremap <buffer> <LocalLeader>F'.k.' \|:call <SID>SpawnAll(1, '.k.')<CR>'
+        "    let k=k+1
+        "endwhile
         nnoremap <buffer>          <LocalLeader>0 \|:call <SID>ListSpawn("")<CR>
         nnoremap <buffer>          <LocalLeader>f0 \|:call <SID>ListSpawn("_fold")<CR>
         nnoremap <buffer>          <LocalLeader>F0 \|:call <SID>ListSpawn("_fold")<CR>
