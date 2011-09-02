@@ -1,7 +1,6 @@
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
-
 "**********************************************
 " VIM Global settings 
 "**********************************************
@@ -282,7 +281,7 @@ amenu Omat.BreakPts :BreakPts<cr>
 amenu Omat.Edit\ vimrc :e  $VIM/vimrc<cr>
 amenu Omat.Show\ errors :messages <cr>
 amenu Omat.Source\ vimrc :so $VIM/vimrc <cr> 
-amenu Omat.Verbose\ map :verbose map  
+amenu Omat.Verbose\ map :verbose map  
 function! OutputToBuffer()
     let tempfile=tempname()
     exe "set verbosefile=".tempfile
@@ -309,22 +308,22 @@ amenu Omat.VimRexx<tab>:Vimrex :Vimrex<cr>
 " Highlight current line 
 amenu  Omat.Highlight.currentline<tab>,hh :call <SID>Highlight("h")<cr>
 " Advance color for next line highlight
-amenu  Omat.Highlight.advance\ Color<tab>,hn :call <SID>Highlight("a")
+amenu  Omat.Highlight.advance\ Color<tab>,hn :call <SID>Highlight("a")
 " Clear last line highlight
-amenu  Omat.Highlight.Clear\ Last\ Highlight<tab>,hk :call <SID>Highlight("r")
+amenu  Omat.Highlight.Clear\ Last\ Highlight<tab>,hk :call <SID>Highlight("r")
 
 amenu Omat.Comment\ visual\ block<tab>,co ,co
 
 " Highlight all lines having word under cursor (whole word match)
-amenu  Omat.Highlight.Highlight\ all\ with\ word\ under\ cursor<tab>,hw :call <SID>Highlight("f")
+amenu  Omat.Highlight.Highlight\ all\ with\ word\ under\ cursor<tab>,hw :call <SID>Highlight("f")
 " Highlight all lines having word under cursor (partial word match)
 " Highlight last search pattern
-amenu  Omat.Highlight.Highlight\ last\ search\ pattern<tab>,hs :call <SID>Highlight("s")
+amenu  Omat.Highlight.Highlight\ last\ search\ pattern<tab>,hs :call <SID>Highlight("s")
 " Clear last pattern highlight
-amenu  Omat.Highlight.clear\ last\ pattern\ highlight<tab>,hp :call <SID>Highlight("d")
+amenu  Omat.Highlight.clear\ last\ pattern\ highlight<tab>,hp :call <SID>Highlight("d")
 
 " Clear all highlights
-amenu  Omat.Highlight.clear\ all\ highlights<tab>,hq :call <SID>Highlight("n")
+amenu  Omat.Highlight.clear\ all\ highlights<tab>,hq :call <SID>Highlight("n")
 
 " Nerdtree
 amenu Omat.Nerdtree.Open\ in\ cwd :exe 'NerdTree .' getcwd()
@@ -493,6 +492,12 @@ highlight ShowMarksHLu guifg='black' guibg='yellow'
 let g:showmarks_textlower=">"
 let g:showmarks_textupper=">"
 
+"***************
+"FUGITIVE
+"*************
+"Add %{fugitive#statusline()} to your statusline to get an indicator including
+" the current branch and the currently edited file's commit.
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 
 
