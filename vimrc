@@ -146,7 +146,8 @@ if has("autocmd")
     filetype on
     filetype plugin indent on
 
-    autocmd Filetype c,cpp let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+    autocmd bufreadpre * let g:SuperTabDefaultCompletionType = "context" "this is set first 
+    autocmd Filetype c,cpp let g:SuperTabDefaultCompletionType = "<C-X><C-O>" "special case for c files (omnicomplete)
 
 
     " When editing a file, always jump to the last known cursor position.
