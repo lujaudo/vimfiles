@@ -442,6 +442,21 @@ function! mark#CurrentMark()
 		endif
 		let i -= 1
 	endwhile
+		if ! empty(@/)
+			" Note: col() is 1-based, all other indexes zero-based! 
+			let start = 0
+			while start >= 0 && start < strlen(line) && start < col('.')
+				let b = match(line, @/, start)
+				let e = matchend(line, @/, start)
+				if b < col('.') && col('.') <= e
+					return [@/, [line('.'), (b + 1)]]
+				endif
+				if b == e
+					break
+				endif
+				let start = e
+			endwhile
+		endif
 	return ['', []]
 endfunction
 
