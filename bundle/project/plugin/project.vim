@@ -494,7 +494,8 @@ function! s:Project(filename) " <<<
         " Save a mark for the current cursor position
         normal! mk
         let line=line('.')
-        let name = inputdialog('Enter the Name of the Entry: ')
+        "let name = inputdialog('Enter the Name of the Entry: ')
+        let name = input('Enter the Name of the Entry: ', '', 'file')
         if strlen(name) == 0
             return
         endif
@@ -511,7 +512,8 @@ function! s:Project(filename) " <<<
             let dir = browse(0, 'Enter the '.absolute.'Directory to Load: ', '', '')
             let dir = fnamemodify(dir, ':p')
         else
-            let dir = inputdialog('Enter the '.absolute.'Directory to Load: ', '')
+            "let dir = inputdialog('Enter the '.absolute.'Directory to Load: ', '')
+            let dir = input('Enter the '.absolute.'Directory to Load: ', '', 'file')
         endif
         if (dir[strlen(dir)-1] == '/') || (dir[strlen(dir)-1] == '\\')
             let dir=strpart(dir, 0, strlen(dir)-1) " Remove trailing / or \
@@ -546,8 +548,10 @@ function! s:Project(filename) " <<<
                 return
             endif
         endif
-        let c_d = inputdialog('Enter the CD parameter: ', '')
-        let filter_directive = inputdialog('Enter the File Filter: ', '')
+        "let c_d = inputdialog('Enter the CD parameter: ', '')
+        let c_d = input('Enter the CD parameter: ', '','file')
+        "let filter_directive = inputdialog('Enter the File Filter: ', '')
+        let filter_directive = input('Enter the File Filter: ', '','file')
         if strlen(filter_directive) != 0
             let filter = filter_directive
         endif
