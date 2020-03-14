@@ -413,7 +413,7 @@ set statusline+=\ %<%1.30F             " filename
 "set statusline+=%#MyColor3#
 set statusline+=\ %y%h%w             " filetype, help, example flags
 " the current branch and the currently edited file's commit.
-set statusline+=%{fugitive#statusline()}
+"set statusline+=%{fugitive#statusline()}
 "set statusline+=%#MyColor4#
 set statusline+=%r%m                 " read-only, modified flags
 "set statusline+=%#MyColor3#
