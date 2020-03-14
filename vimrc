@@ -87,7 +87,7 @@ autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 "use dark background
 colorscheme candy
 set background=dark
-set guifont=Consolas:h12:b:cANSI
+set guifont=Consolas:h16
 "set shellpipe to use tee
 "set shellpipe=2>&1\ \|\ tee
 "set shellpipe=>
@@ -589,12 +589,12 @@ endfunction
 call <SID>SetMainDefaults()
 
 " initialize vimprj plugin
-call vimprj#init()
+"call vimprj#init()
 
 " define a hook
-function! g:vimprj#dHooks['SetDefaultOptions']['main_options'](dParams)
-    call <SID>SetMainDefaults()
-endfunction
+"function! g:vimprj#dHooks['SetDefaultOptions']['main_options'](dParams)
+"    call <SID>SetMainDefaults()
+"endfunction
 
 "*************************
 " MARK.vim
@@ -818,6 +818,11 @@ endfunction
 if !exists(":DiffOrig")
   command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
           \ | wincmd p | diffthis
+endif
+
+"disable stupid macvim keyboard remappings
+if has("gui_macvim")
+  let macvim_skip_cmd_opt_movement = 1
 endif
 
 "unity error format
