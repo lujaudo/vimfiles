@@ -5,6 +5,13 @@ call pathogen#helptags()
 " VIM Global settings 
 "**********************************************
 
+set smartcase
+
+" disable caffeine F15 keypress
+"noremap <F15> <nop>
+"noremap! <F15> <nop>
+
+
 " UTF-8 must be the first
 "language en
 set encoding=utf-8
@@ -23,6 +30,8 @@ set nocompatible
 " see help cpotions
 set cpo&vim 
 
+" limit lines to 100 chars
+set colorcolumn=100
 " When 'wildmenu' is on, command-line completion operates in an enhanced
 " mode.  On pressing 'wildchar' (usually <Tab>) to invoke completion,
 " the possible matches are shown just above the command line.
@@ -37,13 +46,17 @@ let mapleader = ","
 
 " No backups
 set nobackup
+set noswapfile
 
+let g:xml_syntax_folding=1
+let g:plantuml_executable_script="c:/home/bin/plantuml.bat"
 " make quickfix window always to appear with full window width
 :botright cwindow
 
 "disable toolbar icons on top of window
 :set guioptions-=T
 
+let &path ="../**"
 filetype plugin on
 
 " see <URL:vimscript:he cot>
@@ -51,7 +64,11 @@ filetype plugin on
 " When "longest" is not present, VIM automatically selects first entry
 " of the popup menu.
 set completeopt=menu,longest
-" enter selects 
+" Remove windows buffers from insert mode complete list.
+" see help 'complete'
+"set complete-=w
+set complete-=i
+set complete-=t
 
 "set grep program
 "if set to internal, then vimgrep is used.
@@ -65,9 +82,16 @@ set autowrite
 
 " always have syntax highlighting in with the gui:
 syntax on
-
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 "use dark background
 colorscheme candy
+set background=dark
+set guifont=Consolas:h12:b:cANSI
+"set shellpipe to use tee
+"set shellpipe=2>&1\ \|\ tee
+"set shellpipe=>
+set shellpipe=>\ %s\ 2>&1
 
 
 " ignore case in searches
@@ -99,11 +123,13 @@ set lbr
 set diffopt=filler,vertical,iwhite
 
 " tabs
-set softtabstop=4
+set softtabstop=2
 " use spaces instead of tabs to indent
 set expandtab
 " cindent
-set shiftwidth=4
+set shiftwidth=2
+"switch-case indenting,function parameter list
+set cino=:0,(0
 
 " You can change buffer without saving
 set hid
@@ -126,14 +152,16 @@ set history=50		" keep 50 lines of command line history
 set ruler		" show the cursor position all the time
 set showcmd		" display incomplete commands
 set incsearch		" do incremental searching
+set hlsearch            " highlight search term
 
+" Show tabs and trailing characters.
+"set listchars=tab:»·,trail:·,eol:¬
+set listchars=tab:»·,trail:·
+set list
 
-" Switch syntax highlighting oon, when the terminal has colors
-" Also switch off highlighting the last used search pattern (mark plugin
-" handles the highlights of searches).
+" Switch syntax highlighting on, when the terminal has colors
 if &t_Co > 2 || has("gui_running")
     syntax on
-    set nohlsearch
 endif
 
 " Only do this part when compiled with support for autocommands.
@@ -146,18 +174,23 @@ if has("autocmd")
     filetype on
     filetype plugin indent on
 
-    autocmd bufreadpre * let g:SuperTabDefaultCompletionType = "context" "this is set first 
-    autocmd Filetype c,cpp let g:SuperTabDefaultCompletionType = "<C-X><C-O>" "special case for c files (omnicomplete)
 
 
-    " When editing a file, always jump to the last known cursor position.
-    " Don't do it when the position is invalid or when inside an event handler
-    " (happens when dropping a file on gvim).
-    autocmd BufReadPost * 
+    "Quickfix window always on bottom
+    autocmd FileType qf wincmd J
+
+    autocmd BufRead,BufNewFile,BufEnter *.asciidoc
+        \ setlocal spell spelllang=en_us autoindent expandtab tabstop=8 softtabstop=2 shiftwidth=2 filetype=asciidoc
+        \ formatoptions=tcqn
+        \ formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\\|^\\s*<\\d\\+>\\s\\+\\\\|^\\s*[a-zA-Z.]\\.\\s\\+\\\\|^\\s*[ivxIVX]\\+\\.\\s\\+
+        \ comments=s1:/*,ex:*/,://,b:#,:%,:XCOMM,fb:-,fb:*,fb:+,fb:.,fb:>
+
+    autocmd BufReadPost *
                 \ highlight Cursor guifg=darkblue guibg=yellow |
-                \ if line("'\"") > 0 && line("'\"") <= line("$") |
-                \   exe "normal g`\"" |
-                \ endif 
+                \ match ExtraWhitespace /\s\+$/
+
+    au FileType xml setlocal foldmethod=syntax
+
     augroup END
 else
     set autoindent		" always set autoindenting on
@@ -167,22 +200,27 @@ endif " has("autocmd")
 "*********************************************************
 "Keyboard Mappings
 "*********************************************************
-" map ö to go-to-start-of-line
-map ö ^
-" map ä to go-to-end-of-line
-map ä $
+
+"visual mode yank should go end up at the end of the selection
+:vmap y ygv<Esc>
+
+" map U to redo
+map U :redo<CR>
 " Format paragraph
-map Q gwap
+nmap Q gq}
+vmap Q gq
+"J should not move the cursor
+:nnoremap <silent> J :let p=getpos('.')<bar>join<bar>call setpos('.', p)<cr>
 
+"edit and source .vimrc
+:nnoremap <leader>ev :split $MYVIMRC<cr>
+:nnoremap <leader>sv :source $MYVIMRC<cr>
 
-" Copy line from current window to right left
-map <localleader>cr Y :wincmd l<cr>O<ESC>gp:wincmd h<cr>
-map <localleader>cl Y :wincmd h<cr>O<ESC>gp:wincmd l<cr>
-map <localleader>mr D :wincmd l<cr>O<ESC>gp:wincmd h<cr>
-map <localleader>ml D :wincmd h<cr>O<ESC>gp:wincmd l<cr>
+"double click highlights the word
+:map <C-LeftMouse> *b"*yw
 
 " Select Buffer
-map <localleader>b :BufExplorer<CR>
+map <F3> :BufExplorer<CR>
 " Taglist
 nnoremap <silent> <F12> :TagbarToggle<CR>
 " C-n goes to next file 
@@ -302,32 +340,32 @@ amenu Omat.grep<tab>:Grep :Grep
 
 " IdUtils
 "amenu Omat.MkId :exe '!"H:&&cd H:\&&mkid -m '.$home.'\var\id-utils\id-lang.map '.'-o '.getcwd().'\ID '.getcwd().'"'<cr> 
-amenu Omat.MkId :exe '!"cd '.getcwd().'&&mkid -m '.$home.'\var\id-utils\id-lang.map'<cr> 
+"amenu Omat.MkId :exe '!"cd '.getcwd().'&&mkid -m '.$home.'\var\id-utils\id-lang.map'<cr> 
 
 
-amenu Omat.VimRexx<tab>:Vimrex :Vimrex<cr>
+"amenu Omat.VimRexx<tab>:Vimrex :Vimrex<cr>
 " Highlight current line 
-amenu  Omat.Highlight.currentline<tab>,hh :call <SID>Highlight("h")<cr>
+"amenu  Omat.Highlight.currentline<tab>,hh :call <SID>Highlight("h")<cr>
 " Advance color for next line highlight
-amenu  Omat.Highlight.advance\ Color<tab>,hn :call <SID>Highlight("a")
+"amenu  Omat.Highlight.advance\ Color<tab>,hn :call <SID>Highlight("a")
 " Clear last line highlight
-amenu  Omat.Highlight.Clear\ Last\ Highlight<tab>,hk :call <SID>Highlight("r")
+"amenu  Omat.Highlight.Clear\ Last\ Highlight<tab>,hk :call <SID>Highlight("r")
 
-amenu Omat.Comment\ visual\ block<tab>,co ,co
+"amenu Omat.Comment\ visual\ block<tab>,co ,co
 
 " Highlight all lines having word under cursor (whole word match)
-amenu  Omat.Highlight.Highlight\ all\ with\ word\ under\ cursor<tab>,hw :call <SID>Highlight("f")
+"amenu  Omat.Highlight.Highlight\ all\ with\ word\ under\ cursor<tab>,hw :call <SID>Highlight("f")
 " Highlight all lines having word under cursor (partial word match)
 " Highlight last search pattern
-amenu  Omat.Highlight.Highlight\ last\ search\ pattern<tab>,hs :call <SID>Highlight("s")
+"amenu  Omat.Highlight.Highlight\ last\ search\ pattern<tab>,hs :call <SID>Highlight("s")
 " Clear last pattern highlight
-amenu  Omat.Highlight.clear\ last\ pattern\ highlight<tab>,hp :call <SID>Highlight("d")
+"amenu  Omat.Highlight.clear\ last\ pattern\ highlight<tab>,hp :call <SID>Highlight("d")
 
 " Clear all highlights
-amenu  Omat.Highlight.clear\ all\ highlights<tab>,hq :call <SID>Highlight("n")
+"amenu  Omat.Highlight.clear\ all\ highlights<tab>,hq :call <SID>Highlight("n")
 
 " Nerdtree
-amenu Omat.Nerdtree.Open\ in\ cwd :exe 'NerdTree .' getcwd()
+"amenu Omat.Nerdtree.Open\ in\ cwd :exe 'NerdTree .' getcwd()
 
 amenu Omat.Lock\ scroll :exe set scrollbind
 amenu Omat.Scroll\ to\ cursor<tab>zs zs
@@ -346,17 +384,56 @@ map <localleader>dn :VersDiff +<cr>
 amenu Omat.diff.diffNext<tab>,dn ,dn
 
 "Doxygen
-amenu Omat.Doxygen.generate\ comment\ block<tab>:Dox :Dox<cr>
+"amenu Omat.Doxygen.generate\ comment\ block<tab>:Dox :Dox<cr>
 
-amenu Omat.marks.Toggle\ showmarks<tab>,mt ,mt
-amenu Omat.marks.Hide\ mark<tab>,mh ,mh
-amenu Omat.marks.Hide\ all<tab>,ma ,ma
-amenu Omat.marks.add\ mark<tab>,mm ,mm
+" amenu Omat.marks.Toggle\ showmarks<tab>,mt ,mt
+" amenu Omat.marks.Hide\ mark<tab>,mh ,mh
+" amenu Omat.marks.Hide\ all<tab>,ma ,ma
+" amenu Omat.marks.add\ mark<tab>,mm ,mm
+amenu Omat.Insert\ Line\ Numbers :%s/^/\=printf('%-4d', line('.'))
+amenu Omat.Insert\ Numbers :put =map(range(0,9), 'printf(''0x%02x'', v:val)')
+amenu Omat.Insert\ Numbers :put =map(range(0,9), 'printf(''0x%02x'', v:val)')
+amenu Omat.Format_JSON :%!python -m json.tool<cr>
+amenu Omat.DiffOrig :DiffOrig<cr>
 
 "***********************************************************************************
 "******************************************************************************
 
-
+"****************STATUS line ********************************
+set laststatus=2 "force status line on
+set statusline=
+"set statusline+=%#MyColor1#
+"set statusline+=%n                   " buffer number
+"set statusline+=%#MyColor2#
+"set statusline+=%{'/'.bufnr('$')}\   " total buffers
+"set statusline+=%#MyColor3#
+set statusline+=%<[%1.30{fnamemodify(getcwd(),':t')}] " pwd
+set statusline+=\ %<%1.30F             " filename
+"set statusline+=%#MyColor1#
+"set statusline+=%#MyColor3#
+set statusline+=\ %y%h%w             " filetype, help, example flags
+" the current branch and the currently edited file's commit.
+set statusline+=%{fugitive#statusline()}
+"set statusline+=%#MyColor4#
+set statusline+=%r%m                 " read-only, modified flags
+"set statusline+=%#MyColor3#
+set statusline+=%=\                  " indent right
+"set statusline+=%#MyColor1#
+set statusline+=%l                   " line number
+"set statusline+=%#MyColor2#
+set statusline+=/%{line('$')}        " total lines
+set statusline+=%#MyColor2#
+set statusline+=,
+set statusline+=%#MyColor1#
+set statusline+=%c%V                 " [virtual] column numberV
+"set statusline+=%#MyColor2#
+"set statusline+=\                    "
+"set statusline+=%#MyColor3#
+"set statusline+=%<%P                 " percent
+"highlight MyColor1 guifg=#fff guibg=#00a ctermfg=white   ctermbg=black
+"highlight MyColor2 guifg=#aaa guibg=#007 ctermfg=gray    ctermbg=black
+"highlight MyColor3 guifg=#7f7 guibg=#007 ctermfg=green   ctermbg=black
+"highlight MyColor4 guifg=#ff0 guibg=#905 ctermfg=magenta ctermbg=black
 
 
 
@@ -378,7 +455,7 @@ function! NTFinderP()
     endif
 
     if(expand("%:p")=="") 
-        :NERDTree $HOME
+        :exe 'NERDTree ' . fnamemodify(".",":p")
     else
         :NERDTreeFind
     endif
@@ -394,26 +471,27 @@ nmap <silent> <S-F2> :NERDTree $HOME<CR>
 
 " show bookmarks above directory listing
 let g:NERDTreeShowBookmarks=1
+" Do not change pwd
+let g:NERDTreeChDirMode=0
 
-"**************************************************
-"omnicomplete.vim
-"**************************************************
-"e see <URL:vimscript:he OmniCpp_ShowPrototypeInAbbr>
-set omnifunc=syntaxcomplete#Complete " override built-in C omnicomplete with C++ OmniCppComplete plugin
-let OmniCpp_GlobalScopeSearch   = 1
-let OmniCpp_DisplayMode         = 1
-let OmniCpp_ShowScopeInAbbr     = 0 "do not show namespace in pop-up
-let OmniCpp_ShowPrototypeInAbbr = 1 "show prototype in pop-up
-let OmniCpp_ShowAccess          = 1 "show access in pop-up
-let OmniCpp_SelectFirstItem     = 1 "select first item in pop-up
-set completeopt=menuone,menu,longest
 
 "*************************************************
 "Supertab
 "***********************************************
 
-let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabDefaultCompletionType = "<C-N>"
 
+"**************************************
+"gutentags
+"**************************************
+let g:gutentags_add_default_project_root=0
+let g:gutentags_project_root=[".git",".vimprj"]
+let g:gutentags_ctags_extra_args=["-R", "--sort=1", "--c++-kinds=+p", "--fields=+iaS", "--extra=+q"]
+" lots of backslash escapes... for vim and cmd
+let g:gutentags_ctags_post_process_cmd='perl -p -i.bak -e s/\\\\/\//g'
+let g:gutentags_generate_on_new=0
+"let g:gutentags_trace=1
+"let g:gutentags_debug=1
 
 "**************************************************
 " PROJECT plugin 
@@ -451,6 +529,23 @@ let g:proj_flags="stgv"
 nmap <silent> <F1> <Plug>ToggleProject
 imap <silent> <F1> <ESC><Plug>ToggleProject
 
+"if filereadable(".vimprojects")
+"    let g:proj_project_filename = pwd . /.vimprojects
+"endif
+"*********************************
+"BufExplorer
+"********************************
+let g:bufExplorerFindActive=0   " Allow opening same buffer in multiple tabs
+
+"*******************************************************
+" Minibufexplorer 
+"*******************************************************
+"map <F11> :MBEToggle<cr>
+"let g:miniBufExplVSplit = 20   " vertical column width in chars
+"let g:miniBufExplBRSplit = 1   " Put new window below
+                               " current or on the
+                               " right for vertical split
+
 "*******************************************************
 " A.vim
 "*******************************************************
@@ -471,45 +566,265 @@ let g:alternateSearchPath =
 
 
 "*************************
-" MARK
+" vimprj
+"************************
+function! <SID>SetMainDefaults()
+
+  " your default options
+  "set tabstop=4
+  "set shiftwidth=4
+  "set expandtab
+  let g:rg_path=""
+
+  if exists('g:rg_derive_root')
+    unlet g:rg_derive_root
+  endif
+  if exists('g:rg_highlight')
+    unlet g:rg_highlight
+  endif
+
+endfunction
+
+" apply defaults right now
+call <SID>SetMainDefaults()
+
+" initialize vimprj plugin
+call vimprj#init()
+
+" define a hook
+function! g:vimprj#dHooks['SetDefaultOptions']['main_options'](dParams)
+    call <SID>SetMainDefaults()
+endfunction
+
+"*************************
+" MARK.vim
 "************************
 
-nmap  <silent> * <Plug>MarkSet
-vmap  <silent> * <Plug>MarkSet
-nmap  <silent> n <Plug>MarkSearchCurrentNext
-nmap  <silent> N <Plug>MarkSearchCurrentPrev
-nmap  <silent> <localleader>n :call mark#DoMark(@/)<CR> 
-nmap  <silent> <Plug>IgnoreMarkClear <Plug>MarkClear
-let g:mwAutoLoadMarks = 1
-nmap <Plug>IgnoreMarkSearchNext <Plug>MarkSearchNext
-nmap <Plug>IgnoreMarkSearchPrev <Plug>MarkSearchPrev
-"***********************************************************
-" showmarks.vim
-"***********************************************************
-let g:showmarks_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-highlight ShowMarksHLl guifg='black' guibg='red'
-highlight ShowMarksHLu guifg='black' guibg='yellow'
-let g:showmarks_textlower=">"
-let g:showmarks_textupper=">"
-
-"***************
-"FUGITIVE
-"*************
-"Add %{fugitive#statusline()} to your statusline to get an indicator including
-" the current branch and the currently edited file's commit.
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
-
-
+let g:mwDefaultHighlightingPalette = 'extended'
+nmap <unique> n <Plug>MarkSearchOrCurNext
+"nmap <Plug>IgnoreMarkSearchNext <Plug>MarkSearchNext
+"nmap <Plug>IgnoreMarkSearchPrev <Plug>MarkSearchPrev
+"nmap  <silent> * :call Markword()<CR> 
+"
+" function! NextMatch()
+"     let l:cntmatch = mark#GetNum()
+"     let l:found = 0
+"     for l:i in range(l:cntmatch)
+"       if( mark#GetPattern(l:i) == @/ )
+"         let l:found = 1
+"       endif
+"     endfor
+"     if (l:found == 0)
+"      call mark#SetMark(0,@/)
+"     endif
+" 
+"     let markmatch = mark#CurrentMark()
+"     if markmatch[2] != -1
+"       call mark#SearchCurrentMark(0)
+"     else
+"       call mark#SearchAnyMark(0)
+"     endif
+" endfunction
 
 
+"function! Markword()
+"    call mark#MarkCurrentWord(v:count)
+"    let s = histget("search", -1)
+"    let s = substitute(s,'\\<',"","",)
+"    let s = substitute(s,'\\>$',"","",)
+"    let @/ = s
+"endfunction
+"
+"vmap  <silent> * <Plug>MarkSet
+"nmap  <silent> n :call NextMatch()<CR>zz
+"nmap  <localleader> M :call mark#DoMarkAndSetCurrent(v:count, @/)<CR>
+"
+"
+"modified the autoload/mark.vim to include the current search pattern to
+"anymark search
+"function! s:AnyMark()
+"	return join(filter(copy(s:pattern) + [@/], '! empty(v:val)'), '\|')
+"endfunction
+"
+"
+"nmap  <silent> n <localleader>/
+"nmap  <silent> n <localleader>*
+"let g:mwAutoLoadMarks = 1
+let g:mwDirectGroupJumpMappingNum=0
 
 
 
+
+
+
+command! TC :silent !start c:\tools\totalcmd\TOTALCMD64.EXE /O %:p:h
+command! CMD :silent !start cmd /k "cd %:p:h"
+command! FilterQf :call QuickfixHidePath()
+function! QuickfixHidePath()
+  :syntax match ConcealedDetails /\v^.*[\\\/]/ conceal
+  :set conceallevel=2
+  :set concealcursor=nvic
+endfunction
+
+function! s:get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
+command! -range Hide <line1>,<line2>call QuickfixHideVSel()
+function! QuickfixHideVSel()
+    let l:hide_command =  'syntax match ConcealedDetails /' . s:get_visual_selection() . '/ conceal'
+    let l:hide_command = substitute(l:hide_command,'\\','\\\\','g')
+
+  ":syntax match ConcealedDetails / . l:v_selection . / conceal
+  exe(l:hide_command)
+  :set conceallevel=2
+  :set concealcursor=nvic
+endfunction
+command! -nargs=1 FindFile :call FindFile('lgrep','.',<f-args>)
+function! FindFile(cmd,path,args)
+   let grepprg_bak=&grepprg
+   let grepformat_bak=&grepformat
+   try
+    let &grepprg='find ' . a:path . ' -iname *$**'
+    let &grepformat="%f" 
+    let cmd=a:cmd . ' ' . a:args
+    "echom cmd
+    silent exe cmd
+  finally
+    let &grepprg=grepprg_bak
+    let &grepformat=grepformat_bak
+  endtry
+endfunction
+
+command! -nargs=1 TFile :call TresosFindFile(<f-args>)
+command! -nargs=1 Tfile :call TresosFindFile(<f-args>)
+function! TresosFindFile(args)
+    if exists("$TRESOS_BASE") && exists("$PROJECT_ROOT")
+        let plugins_dir=$TRESOS_BASE . "\\plugins"
+        call FindFile('grep',$PROJECT_ROOT , a:args)
+        call FindFile('grepadd', plugins_dir , a:args)
+    elseif exists("$BASE_DIR") && exists("$PROJECT_ROOT")
+        let plugins_dir=$BASE_DIR . "\\EOCM\\Tresos\\plugins"
+        call FindFile('grep',$PROJECT_ROOT , a:args)
+        call FindFile('grepadd',plugins_dir , a:args)
+    else
+        echom "no tresos env set"
+    endif
+    cope
+endfunction
 command! -nargs=1 Grep :call Grepfiles(<f-args>)
 function! Grepfiles(args)
-    exe 'grep -I -R -i --exclude=tags "'.a:args.'" .'
-    cope
+    let search_dir = input("search DIR: ", expand("%:p:h"), "dir")
+    silent exe 'Ag ' . a:args . ' ' . search_dir
 endfunction
 
 
+command! -nargs=0 Gword :call Grepword(<f-args>)
+function! Grepword()
+    call Markword()
+    if exists("$PROJECT_ROOT")
+        call TresosGrep(expand("<cword>"))
+    else
+        let search_dir = input("search DIR: ", expand("%:p:h"), "dir")
+        silent exe 'Ag "<cword>" ' . search_dir
+    endif
+endfunction
+
+command! -nargs=1 TGrep :call TresosGrep(<f-args>)
+command! -nargs=1 Tgrep :call TresosGrep(<f-args>)
+function! TresosGrep(args)
+    let l:command = 'LAg '. a:args . ' ' . $PROJECT_ROOT
+    "echom l:command 
+    silent exe l:command 
+    if exists("$TRESOS_BASE")
+        let plugins_dir=$TRESOS_BASE . "\\plugins"
+    elseif exists("$BASE_DIR")
+        let plugins_dir=$BASE_DIR . "\\EOCM\\Tresos\\plugins"
+    endif
+    let l:cmd = 'LAgAdd ' . a:args .' ' . plugins_dir
+    "echom l:cmd 
+    silent exe l:cmd 
+endfunction
+
+function! PComment() range
+	let line=getline(a:firstline)
+	if (line =~ '^#if')
+		" remove if block
+		execute a:firstline . "normal dd"
+		let emb=0
+		let i = a:firstline+1
+		while i<=line("$")
+			let line=getline(i)
+			if line =~ '^#if'
+				let emb=emb+1
+			endif
+			if line =~ '^#else'
+				if emb == 0
+					" not an embedded else so turn else
+					" into an #if 0 to match following
+					" #endif
+					let newline=substitute(line,"^#else","#if 0","")
+					call setline(i,newline)
+					break
+				endif
+			endif
+			if line =~ '^#endif'
+				if emb > 0
+					let emb=emb-1
+				else
+					" found matching endif; remove it
+					execute i . "normal dd"
+					execute a:firstline
+					break
+				endif
+			endif
+			let i=i+1
+		endwhile
+	else
+		" add block
+		call append((a:firstline-1),"#if 0")
+		call append(a:lastline+1,"#endif")
+	endif
+endfunction
+map <leader>c :call PComment()<CR>
+vmap <leader>c :call PComment()<CR>gv<Esc>
+
+"Something for tagbar
+let g:tagbar_type_xdm = {
+    \ 'ctagstype' : 'xdm',
+    \ 'kinds'     : [
+        \ 't:tag'
+    \ ]
+\ }
+
+function! Days()
+  let start_day = input("Starting day:")
+  let year_month = strftime('%Y-%m-')
+  call append(0, year_month . start_day . "\t" )
+endfunction
+
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+          \ | wincmd p | diffthis
+endif
+
+"unity error format
+
+"set efm=%f(%l)\ :\ %t%*\D%n:\ %m,%*[^"]"%f"%*\D%l:\ %m,%f(%l)\ :\ %m,%*[^ ]\ %f\ %l:\ %m,%f:%l:%c:%m,%f(%l):%m,%*[.]%f:%l:%m,%f|%l|\ %m
+"set efm=TEST(%*[^)])%f:%l:%m,%f:%l:%c:%m,%f:%l:%m
+"set efm=ctc\ E%n:\ \[\"%f\"\ %l/%m
+"ceedling
+set efm=%f:%l:%m
+set efm+=%m\ in\ line\ %l\ of\ file\ %f

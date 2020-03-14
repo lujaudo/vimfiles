@@ -447,6 +447,7 @@ function! s:BEMapKeys()
   nnoremap <buffer> <silent> m             :call <SID>BEMRUListShow()<cr>
   nnoremap <buffer> <silent> p             :call <SID>BEToggleSplitOutPathName()<cr>
   nnoremap <buffer> <silent> q             :call <SID>BEClose("quit")<cr>
+  nnoremap <buffer> <silent> <F3>          :call <SID>BEClose("quit")<cr>
   nnoremap <buffer> <silent> r             :call <SID>BESortReverse()<cr>
   nnoremap <buffer> <silent> R             :call <SID>BEToggleShowRelativePath()<cr>
   nnoremap <buffer> <silent> s             :call <SID>BESortSelect()<cr>
